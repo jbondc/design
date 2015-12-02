@@ -253,7 +253,7 @@ given branching pattern, except for one restriction: one can't branch into the m
 loop from outside it. This restriction ensures all control flow graphs are well-structured.
 
 Branches that exit a `block`, `loop`, or `tableswitch` may take a subexpression
-that yields a value for the exited construct. If present, it's the first operand
+that yields a value for the exited construct. If present, it is the first operand
 before any others.
 
 ### Yielding values from control constructs
