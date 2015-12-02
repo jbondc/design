@@ -246,23 +246,26 @@ a value and may appear as children of other expressions.
 ### Branches and nesting
 
 The `br` and `br_if` constructs express low-level branching.
-Branches that exit a `block`, `loop`, or `tableswitch` may take a subexpression
-that yields a value for the exited construct.
 Branches may only reference labels defined by an outer *enclosing construct*.
 This means that, for example, references to a `block`'s label can only occur 
 within the `block`'s body. In practice, outer `block`s can be used to place labels for any
 given branching pattern, except for one restriction: one can't branch into the middle of a
 loop from outside it. This restriction ensures all control flow graphs are well-structured.
 
+Branches that exit a `block`, `loop`, or `tableswitch` may take a subexpression
+that yields a value for the exited construct. If present, it's the first operand
+before any others.
+
 ### Yielding values from control constructs
 
-The `nop`, `if`, `br`, `br_if`, `case`, and `return` constructs do not yield values.
+The `nop` and `if` constructs do not yield values.
 Other control constructs may yield values if their subexpressions yield values:
 
 * `block`: yields either the value of the last expression in the block or the result of an inner `br` that targeted the label of the block
 * `loop`: yields either the value of the last expression in the loop or the result of an inner `br` that targeted the end label of the loop
 * `if_else`: yields either the value of the true expression or the false expression
 * `tableswitch`: yields either the value of the last case or the result of an inner `br` that targeted the tableswitch
+* `case`: yields the value of its child
 
 
 ### Tableswitch
