@@ -232,48 +232,58 @@ Since all AST nodes are expressions in WebAssembly, control constructs may yield
 a value and may appear as children of other expressions.
 
  * `nop`: an empty operator that does not yield a value 
- * `block`: a fixed-length sequence of expressions with a label at the end
+ * `block`: a sequence of expressions with a label at the end
  * `loop`: a block with an additional label at the beginning which may be used to form loops
+ * `multiblock`: a mixed sequence of expressions and `label` nodes, with a label at the end
+ * `label`: a node which defines a label and must be an immediate child of `multiblock`
  * `if`: if expression with a *then* expression
  * `if_else`: if expression with *then* and *else* expressions
- * `br`: branch to a given label in an enclosing construct
- * `br_if`: conditionally branch to a given label in an enclosing construct
- * `tableswitch`: a jump table which may jump either to an immediate `case`
-                  child or to a label in an enclosing construct
- * `case`: a case which must be an immediate child of `tableswitch`
+ * `br`: branch to a given label
+ * `br_if`: conditionally branch to a given label
+ * `tableswitch`: branch using a "jump table" of labels
  * `return`: return zero or more values from this function
 
 ### Branches and nesting
 
-The `br` and `br_if` constructs express low-level branching.
-Branches that exit a `block`, `loop`, or `tableswitch` may take a subexpression
-that yields a value for the exited construct.
-Branches may only reference labels defined by an outer *enclosing construct*.
-This means that, for example, references to a `block`'s label can only occur 
-within the `block`'s body. In practice, outer `block`s can be used to place labels for any
-given branching pattern, except for one restriction: one can't branch into the middle of a
-loop from outside it. This restriction ensures all control flow graphs are well-structured.
+The `br`, `br_if`, and `tableswitch` constructs express low-level branching. The
+`block`, `loop`, and `multiblock` constructs provide labels that may be branched
+to.
+
+Branches may only reference *visible* labels. The labels in `block` and `loop`
+nodes are visible only from within their subtrees. The labels in `multiblock`
+nodes are only visible from within their subtrees, and only from above their
+definition.
+
+In practice, `block`s, `loop`s, and `multiblocks` can be used to place labels
+supporting any given branching pattern, except for one restriction: one can't
+branch into the middle of a loop from outside it. This restriction ensures all
+control flow graphs are well-structured.
+
+Branches that exit a `block`, `loop`, or `multiblock` may take a subexpression
+as an optional first operand (before any other operands), that yields a value
+for the exited construct.
 
 ### Yielding values from control constructs
 
-The `nop`, `if`, `br`, `br_if`, `case`, and `return` constructs do not yield values.
+The `nop` and `if` constructs do not yield values.
 Other control constructs may yield values if their subexpressions yield values:
 
-* `block`: yields either the value of the last expression in the block or the result of an inner `br` that targeted the label of the block
-* `loop`: yields either the value of the last expression in the loop or the result of an inner `br` that targeted the end label of the loop
+* `block`: yields either the value of the last expression in the block or the
+   result of an inner branch that branched to the label of the `block`
+* `loop`: yields either the value of the last expression in the loop or the
+   result of an inner branch that branched to the end label of the `loop`
+* `multiblock`: yields either the value of the last expression in the
+   `multiblock` or the result of an inner branch that branched to the end label
+   of the `multiblock`
+* `label`: yields either the value of the prior expression in the parent `multiblock` or the result of a branch that branched to the `label`
 * `if_else`: yields either the value of the true expression or the false expression
-* `tableswitch`: yields either the value of the last case or the result of an inner `br` that targeted the tableswitch
 
 
 ### Tableswitch
 
-A `tableswitch` consists of a zero-based array of targets, a *default* target, an index
-operand, and a list of `case` nodes. Targets may be either labels or `case` nodes.
-A `tableswitch` jumps to the target indexed in the array or the default target if the index is out of bounds. 
-
-A `case` node consists of an expression and may be referenced multiple times
-by the parent `tableswitch`. Unless exited explicitly, control falls through a `case` 
-to the next `case` or the end of the `tableswitch`.
+A `tableswitch` consists of a zero-based array of labels, a *default* label, and an
+index operand. A `tableswitch` branches to the label indexed in the array or the
+default label if the index is out of bounds.
 
 
 ## Calls
