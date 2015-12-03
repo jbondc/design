@@ -238,9 +238,9 @@ a value and may appear as children of other expressions.
  * `label`: a node which defines a label and must be an immediate child of `multiblock`
  * `if`: if expression with a *then* expression
  * `if_else`: if expression with *then* and *else* expressions
- * `br`: branch to a given visible label
- * `br_if`: conditionally branch to a given visible label
- * `tableswitch`: branch using a "jump table" of visible labels
+ * `br`: branch to a given in-scope label
+ * `br_if`: conditionally branch to a given in-scope label
+ * `tableswitch`: branch using a "jump table" of in-scope labels
  * `return`: return zero or more values from this function
 
 ### Branches and nesting
@@ -249,11 +249,12 @@ The `br`, `br_if`, and `tableswitch` constructs express low-level branching. The
 `block`, `loop`, and `multiblock` constructs provide labels that may be branched
 to.
 
-Branches may only reference *visible* labels. The labels in `block` and `loop`
-nodes are visible only from within their subtrees. The labels in `multiblock`
-nodes are only visible from within their subtrees, and only from earlier in
-the `multiblock` than their definition. This restriction ensures all control
-flow graphs are [reducible](http://dl.acm.org/citation.cfm?id=804919).
+Branches may only reference labels that are *in scope*. The labels in `block`
+and `loop` nodes are in scope only within their subtrees. The labels in
+`multiblock` nodes are only in scope only within their subtrees, and only in
+subtrees earlier in the `multiblock` than their definition. This restriction
+ensures all control flow graphs are
+[reducible](http://dl.acm.org/citation.cfm?id=804919).
 
 In terms of control flow graphs, the reducible requirement imposes only one
 effective restriction: loops can only be entered from the top, and not from
