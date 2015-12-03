@@ -259,9 +259,11 @@ In terms of control flow graphs, the reducible requirement imposes only one
 effective restriction: loops can only be entered from the top, and not from
 a branch into the middle.
 
-Branches that exit a `block`, `loop`, or `multiblock` may take a subexpression
-as an optional first operand (before any other operands), that yields a value
-for the exited construct.
+Branches may take a subexpression as an optional first operand (before any
+other operands). When a `block` or `loop` is exited by a branch, or when a
+`label` is branched to by a branch, this operand of the branch is yielded
+as the result. When `br_if`'s condition is false, this operand is yielded
+as `br_if`'s result.
 
 ### Yielding values from control constructs
 
