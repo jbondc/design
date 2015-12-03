@@ -251,9 +251,9 @@ to.
 
 Branches may only reference *visible* labels. The labels in `block` and `loop`
 nodes are visible only from within their subtrees. The labels in `multiblock`
-nodes are only visible from within their subtrees, and only from above their
-definition. This restriction ensures all control flow graphs are
-[reducible](http://dl.acm.org/citation.cfm?id=804919).
+nodes are only visible from within their subtrees, and only from earlier in
+the `multiblock` than their definition. This restriction ensures all control
+flow graphs are [reducible](http://dl.acm.org/citation.cfm?id=804919).
 
 In terms of control flow graphs, the reducible requirement imposes only one
 effective restriction: loops can only be entered from the top, and not from
