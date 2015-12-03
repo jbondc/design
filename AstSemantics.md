@@ -238,9 +238,9 @@ a value and may appear as children of other expressions.
  * `label`: a node which defines a label and must be an immediate child of `multiblock`
  * `if`: if expression with a *then* expression
  * `if_else`: if expression with *then* and *else* expressions
- * `br`: branch to a given label
- * `br_if`: conditionally branch to a given label
- * `tableswitch`: branch using a "jump table" of labels
+ * `br`: branch to a given visible label
+ * `br_if`: conditionally branch to a given visible label
+ * `tableswitch`: branch using a "jump table" of visible labels
  * `return`: return zero or more values from this function
 
 ### Branches and nesting
